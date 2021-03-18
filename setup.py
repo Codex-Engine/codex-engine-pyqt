@@ -1,24 +1,16 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
 
+import pathlib
 from setuptools import setup
 
 
-here = os.path.abspath(os.path.dirname(__file__))
+here = pathlib.Path(__file__).parent
 
 
 DESCRIPTION = "A universal translator for serial devices."
-
-
-try:
-    with open(os.path.join(here, "README.md")) as f:
-        LONG_DESCRIPTION = f.read()
-except IOError:
-    LONG_DESCRIPTION = ""
-
-
+LONG_DESCRIPTION = (here / "README.md").read_text()
 CLASSIFIERS = [
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
@@ -28,7 +20,7 @@ CLASSIFIERS = [
 
 setup(
     name="codex-engine-pyqt",
-    version="0.0.3",
+    version="0.0.4",
     packages=["codex"],
     install_requires=["pyserial"],
     # setup_requires=[],
