@@ -1,4 +1,4 @@
-from devices import SerialDevice, JudiStandardMixin
+from codex import SerialDevice, JudiStandardMixin
 from qt import *
 from .judi_filter import JudiFilter
 from .null_filter import NullFilter

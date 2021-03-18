@@ -1,5 +1,5 @@
 from qt import *
-from devices import SerialDevice
+from codex import SerialDevice
 from .bundles import SigBundle, SlotBundle
 
 

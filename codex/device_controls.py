@@ -1,5 +1,5 @@
 from qt import *
-from devices import DeviceManager, profile_names, profiles
+from codex import DeviceManager, profile_names, profiles
 from serial.tools.list_ports import comports
 
 try:

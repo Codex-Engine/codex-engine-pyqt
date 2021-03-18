@@ -1,4 +1,4 @@
-from devices import SerialDevice, profiles, profile_names, UnknownDevice, DeviceStates
+from codex import SerialDevice, profiles, profile_names, UnknownDevice, DeviceStates
 from serial.tools.list_ports import comports
 import time
 import logging

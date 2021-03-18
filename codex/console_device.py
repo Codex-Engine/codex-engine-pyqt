@@ -1,5 +1,5 @@
 from qt import *
-from devices import SerialDevice, NullFilter
+from codex import SerialDevice, NullFilter
 
 
 class ConsoleDevice(SerialDevice):
