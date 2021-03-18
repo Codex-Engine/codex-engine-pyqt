@@ -6,6 +6,12 @@
 MAKEFLAGS += -s
 
 # **************************************************************************** #
+
+# grab and export environment variables from .env
+include .env
+export
+
+# **************************************************************************** #
 # Targets
 
 #
@@ -14,15 +20,17 @@ build: venv
 
 #
 publish: venv
-	$(VENV_PYTHON) -m twine upload --repository testpypi dist/*
+	$(VENV_PYTHON) -m twine upload --repository testpypi dist/* -u __token__
 
 #
 tests: venv
 	echo running tests
 
-# remove 
+# remove build artifacts
 clean:
-	echo cleaning build 
+	-$(RM) build
+	-$(RM) dist
+	-$(RM) codex_engine_pyqt.egg-info
 
 
 # **************************************************************************** #
@@ -34,11 +42,13 @@ ifeq ($(OS),Windows_NT)
 	VENV := $(VENV_DIR)\Scripts
 	PYTHON := python
 	VENV_PYTHON := $(VENV)\$(PYTHON)
+	RM := rd /s /q
 else
 	VENV_DIR := $(VENV_NAME)
 	VENV := $(VENV_DIR)/bin
 	PYTHON := python3
 	VENV_PYTHON := $(VENV)/$(PYTHON)
+	RM := rm -rf
 endif
 
 # Add this as a requirement to any make target that relies on the venv
@@ -53,11 +63,7 @@ $(VENV_DIR):
 
 # deletes the venv
 clean_venv:
-ifeq ($(OS),Windows_NT)
-	rd /s /q $(VENV_DIR)
-else
-	rm -rf $(VENV_DIR)
-endif
+	$(RM) $(VENV_DIR)
 
 # deletes the venv and rebuilds it
 reset_venv: clean_venv venv

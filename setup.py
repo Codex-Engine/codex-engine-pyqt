@@ -13,7 +13,7 @@ DESCRIPTION = "A universal translator for serial devices."
 
 
 try:
-    with open(os.path.join(here, "README")) as f:
+    with open(os.path.join(here, "README.md")) as f:
         LONG_DESCRIPTION = f.read()
 except IOError:
     LONG_DESCRIPTION = ""
@@ -28,7 +28,7 @@ CLASSIFIERS = [
 
 setup(
     name="codex-engine-pyqt",
-    version="0.0.1-dev",
+    version="0.0.3",
     packages=["codex"],
     install_requires=["pyserial"],
     # setup_requires=[],
