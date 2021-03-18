@@ -20,7 +20,7 @@ build: venv
 
 #
 publish: venv
-	$(VENV_PYTHON) -m twine upload --repository testpypi dist/* -u __token__
+	$(VENV_PYTHON) -m twine upload dist/* -u __token__
 
 #
 tests: venv
