@@ -1,1 +1,1 @@
-# codex-engine=pyqt
+# codex-engine-pyqt
