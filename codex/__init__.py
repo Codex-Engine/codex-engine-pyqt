@@ -1,10 +1,7 @@
 from .serial_device import SerialDevice
 from .remote_serial import RemoteSerial
 
-from .judi_filter import JudiFilter
-from .null_filter import NullFilter
-from .newline_filter import NewlineFilter
-from .delimiter_filter import DelimiterFilter
+from .filters import JudiFilter, NullFilter, NewlineFilter, DelimiterFilter
 
 from .judi_mixin import JudiStandardMixin
 from .judi_responder import JudiResponder
