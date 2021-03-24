@@ -26,7 +26,7 @@ CLASSIFIERS = [
 setup(
     name="codex-engine-pyqt",
     version="0.0.6",
-    packages=["codex"],
+    packages=["codex", "codex.filters"],
     install_requires=["pyserial"],
     # setup_requires=[],
     # tests_require=[],
