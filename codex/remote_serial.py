@@ -7,7 +7,7 @@ class RemoteSerial:
         self.read_buffer = ""
 
         self.socket = QWebSocket()
-        self.socket.textMessageReceived.connect(self._recieve)
+        self.socket.textMessageReceived.connect(self._receive)
         # self.socket.disconnected.connect(lambda: print("disconnected"))
 
         if self.port:
@@ -22,7 +22,7 @@ class RemoteSerial:
     def write(self, string):
         self.socket.sendTextMessage(string.decode())
 
-    def _recieve(self, string):
+    def _receive(self, string):
         self.read_buffer += string
 
     def read(self, number=1):

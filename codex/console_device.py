@@ -10,13 +10,3 @@ class ConsoleDevice(SerialDevice):
 
         self.filter = NullFilter()
         self.message_tree = None
-        self.w = None
-
-    def recieve(self, string):
-        """ do something when a complete string is captured in self.communicate() """
-        self.log.debug(f"RX: {string}")
-        self.base_signals.send.emit(string)
-        
-    def message_completed(self):
-        self.recieve(self.filter.buffer)
-        self.filter.reset()

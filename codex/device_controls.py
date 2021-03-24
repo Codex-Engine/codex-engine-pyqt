@@ -120,7 +120,7 @@ class DeviceTree(QTreeWidget):
         if serial_monitor_available:
             monitor = SerialMonitorWidget()
             monitor.setWindowTitle(item.device.title)
-            item.device.connect_monitor(monitor)
+            item.device.connect_stream(monitor)
             self.open_monitors[item.device.guid] = monitor
             monitor.show()
 
@@ -128,7 +128,7 @@ class DeviceTree(QTreeWidget):
         if serial_monitor_available:
             monitor = SerialMonitorWidget()
             monitor.setWindowTitle(item.device.title)
-            item.device.connect_serial_port_monitor(monitor)
+            item.device.connect_stream(monitor, 'rejected')
             self.open_monitors[item.device.guid] = monitor
             monitor.show()
 
