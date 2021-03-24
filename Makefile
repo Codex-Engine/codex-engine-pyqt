@@ -6,13 +6,15 @@
 MAKEFLAGS += -s
 
 # **************************************************************************** #
-
-# grab and export environment variables from .env
-include .env
-export
-
-# **************************************************************************** #
 # Targets
+
+# run the application
+run: venv
+	$(VENV_PYTHON) src/main.py
+
+# reinstall codex to the virtualenv
+reload: venv
+	$(VENV_PYTHON) -m pip install -e .
 
 #
 build: venv
@@ -59,6 +61,26 @@ venv: $(VENV_DIR)
 $(VENV_DIR):
 	$(PYTHON) -m venv $(VENV_DIR)
 	$(VENV_PYTHON) -m pip install --upgrade pip
+	$(VENV_PYTHON) -m pip install -r requirements.txt
+
+# If the first argument is "pip"...
+ifeq (pip,$(firstword $(MAKECMDGOALS)))
+  # use the rest as arguments for "pip"
+  RUN_ARGS := $(wordlist 2,$(words $(MAKECMDGOALS)),$(MAKECMDGOALS))
+  # ...and turn them into do-nothing targets
+  $(eval $(RUN_ARGS):;@:)
+endif
+
+# forward pip commands to the venv
+pip: venv
+	$(VENV_PYTHON) -m pip $(RUN_ARGS)
+
+# update requirements.txt to match the state of the venv
+freeze_reqs: venv
+	$(VENV_PYTHON) -m pip freeze > requirements.txt
+
+# try to update the venv - expirimental feature, don't rely on it
+update_venv: venv
 	$(VENV_PYTHON) -m pip install -r requirements.txt
 
 # deletes the venv
