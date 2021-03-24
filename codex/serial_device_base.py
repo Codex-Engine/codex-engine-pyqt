@@ -1,5 +1,5 @@
 from queue import Queue
-from .judi_filter import JudiFilter
+from .filters import JudiFilter
 from serial import Serial, SerialException
 from serial.tools.list_ports_common import ListPortInfo
 from .dummy_serial import DummySerial

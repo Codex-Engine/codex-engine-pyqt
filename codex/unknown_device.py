@@ -1,7 +1,6 @@
 from codex import SerialDevice, JudiStandardMixin
 from qt import *
-from .judi_filter import JudiFilter
-from .null_filter import NullFilter
+from .filters import JudiFilter, NullFilter
 import time
 from enum import Enum
 from serial import SerialException
