@@ -1,7 +1,6 @@
 from codex import SerialDevice, JudiStandardMixin
 from qt import *
-from .judi_filter import JudiFilter
-from .null_filter import NullFilter
+from .filters import JudiFilter, NullFilter
 import time
 from enum import Enum
 from serial import SerialException
@@ -47,7 +46,7 @@ class UnknownDevice(JudiStandardMixin, SerialDevice):
         if name in self.handshake_table[baud]:
             self.handshake_table[baud][name](self.send)
         
-        self.last_transmit_time = time.time()
+        self.transmit_rate_limit = 0.1
         self.last_handshake_time = time.time()
 
         self.do_handshakes()
@@ -71,20 +70,13 @@ class UnknownDevice(JudiStandardMixin, SerialDevice):
         jf = JudiFilter()
         for c in buffer:
             if jf.insert_char(c):
-                self.recieve(jf.buffer)
+                self.receive(jf.buffer)
                 jf.reset()
         return self.name
 
     def message_completed(self):
         # override this to disable it
         pass
-
-    def transmit_next_message(self):
-        # override this to rate limit the tx'ing of handshakes
-        if (time.time() - self.last_transmit_time) > 0.1:
-            if super().transmit_next_message():
-                self.last_handshake_time = time.time()
-            self.last_transmit_time = time.time()
 
     def communicate(self):
         super().communicate()

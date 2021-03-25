@@ -109,8 +109,8 @@ class SerialDevice(SerialDeviceBase):
         super().send(message)
         self.msg_count += 1
 
-    def recieve(self, string):
-        super().recieve(string)
+    def receive(self, string):
+        super().receive(string)
 
         try:
             msg = json.loads(string)
