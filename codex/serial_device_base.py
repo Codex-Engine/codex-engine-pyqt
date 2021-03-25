@@ -137,7 +137,7 @@ class SerialDeviceBase:
     def receive(self, string):
         """ do something when a complete string is captured in self.communicate() """
         self.log.debug(f"RX: {string}")
-        self.base_signals.msg_completed.emit(msg)
+        self.base_signals.msg_completed.emit(string)
 
     def check_incoming_data(self):
         try:
