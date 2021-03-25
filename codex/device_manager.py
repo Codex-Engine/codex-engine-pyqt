@@ -2,7 +2,7 @@ from codex import SerialDevice, profiles, profile_names, UnknownDevice, DeviceSt
 from serial.tools.list_ports import comports
 import time
 import logging
-from qt import *
+from qtstrap import *
 from .bundles import SigBundle, SlotBundle
 from .subscriptions import SubscriptionManager
 

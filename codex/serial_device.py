@@ -2,7 +2,7 @@ import json
 from .serial_device_base import SerialDeviceBase
 from time import time
 import logging
-from qt import *
+from qtstrap import *
 
 
 fake_guid = 0

@@ -1,5 +1,5 @@
 from codex import SerialDevice, JudiStandardMixin
-from qt import *
+from qtstrap import *
 from .filters import JudiFilter, NullFilter
 import time
 from enum import Enum

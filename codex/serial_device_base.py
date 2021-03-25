@@ -5,7 +5,7 @@ from serial.tools.list_ports_common import ListPortInfo
 from .dummy_serial import DummySerial
 from .remote_serial import RemoteSerial
 import logging
-from qt import *
+from qtstrap import *
 import time
 
 

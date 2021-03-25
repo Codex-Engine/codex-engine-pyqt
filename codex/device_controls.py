@@ -1,4 +1,4 @@
-from qt import *
+from qtstrap import *
 from codex import DeviceManager, profile_names, profiles
 from serial.tools.list_ports import comports
 
