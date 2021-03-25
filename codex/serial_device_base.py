@@ -26,7 +26,7 @@ class SerialDeviceBase:
         self.base_signals = Signals()
 
         self.queue = Queue()
-        self.filter = JudiFilter(self.base_signals.char_accepted.emit, self.base_signals.data_rejected.emit)
+        self.filter = JudiFilter(self.base_signals.char_accepted.emit, self.base_signals.char_rejected.emit)
         self.active = False
 
         self.last_transmit_time = time.time()
