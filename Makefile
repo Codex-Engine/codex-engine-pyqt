@@ -6,6 +6,15 @@
 MAKEFLAGS += -s
 
 # **************************************************************************** #
+
+# load the pypi credentials
+ifneq (,$(wildcard .env))
+include .env
+# export them for twine
+export
+endif
+
+# **************************************************************************** #
 # Targets
 
 # run the application
