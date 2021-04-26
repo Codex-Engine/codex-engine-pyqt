@@ -1,5 +1,5 @@
 from qtstrap import *
-from codex import DeviceManager, profile_names, profiles
+from codex import DeviceManager
 from serial.tools.list_ports import comports
 
 try:
@@ -215,7 +215,7 @@ class NewDeviceWidget(QWidget):
         self.port = QComboBox()
         self.add = QPushButton('Add Device', clicked=self.add_pressed)
 
-        names = [p for p in profile_names if p != 'no profile']
+        names = [p for p in DeviceManager.profile_names() if p != 'no profile']
         self.profile.addItems(names)
         ports = ["DummyPort", *[port.device for port in sorted(comports())]]
         self.port.addItems(ports)

@@ -1,4 +1,4 @@
-from codex import SerialDevice, profiles, profile_names, UnknownDevice, DeviceStates
+from codex import SerialDevice, UnknownDevice, DeviceStates
 from serial.tools.list_ports import comports
 import time
 import logging
@@ -11,6 +11,14 @@ class DeviceManager(QObject):
     # forward these method calls, for backwards compatibility
     subscribe = SubscriptionManager.subscribe
     subscribe_to = SubscriptionManager.subscribe_to
+
+    @staticmethod
+    def profiles():
+        return {p.profile_name: p for p in SerialDevice.__subclasses__()}
+
+    @staticmethod
+    def profile_names():
+        return sorted({p.profile_name: p for p in SerialDevice.__subclasses__()})
 
     def __init__(self, parent=None):
         super().__init__(parent=parent)
@@ -48,7 +56,7 @@ class DeviceManager(QObject):
         
         self.sub_manager.check_for_new_subscribers()
 
-        UnknownDevice.register_autodetect_info(profiles)
+        UnknownDevice.register_autodetect_info(self.profiles())
         
     def set_starting_devices(self, devices):
         self.starting_devices = devices
@@ -83,9 +91,9 @@ class DeviceManager(QObject):
                 if profile in profile_names:
                     if port in new_ports or port == 'DummyPort':
                         if baud:
-                            self.on_add_device(profiles[profile](port=port, baud=baud))
+                            self.on_add_device(self.profiles()[profile](port=port, baud=baud))
                         else:
-                            self.on_add_device(profiles[profile](port=port))
+                            self.on_add_device(self.profiles()[profile](port=port))
                         if port != 'DummyPort':
                             self.ports.append(port)
             self.first_scan = False
@@ -126,7 +134,7 @@ class DeviceManager(QObject):
             elif device.state == DeviceStates.enumeration_succeeded:
                 if device.name in profile_names:
                     device.close()
-                    new_device = profiles[device.name](device=device)
+                    new_device = self.profiles()[device.name](device=device)
 
                     self.log.debug(f"Enumeration succeeded on ({new_device.port})")
 
