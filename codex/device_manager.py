@@ -88,7 +88,7 @@ class DeviceManager(QObject):
                 profile = parts[0]
                 port = parts[1]
                 baud = parts[2] if len(parts) == 3 else None
-                if profile in profile_names:
+                if profile in DeviceManager.profile_names():
                     if port in new_ports or port == 'DummyPort':
                         if baud:
                             self.on_add_device(self.profiles()[profile](port=port, baud=baud))
@@ -132,7 +132,7 @@ class DeviceManager(QObject):
                 self.new_devices.remove(device)
         
             elif device.state == DeviceStates.enumeration_succeeded:
-                if device.name in profile_names:
+                if device.name in DeviceManager.profile_names():
                     device.close()
                     new_device = self.profiles()[device.name](device=device)
 
