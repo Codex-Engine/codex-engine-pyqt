@@ -237,7 +237,7 @@ class NewDeviceWidget(QWidget):
         profile = self.profile.currentText()
         port = self.port.currentText()
 
-        device = profiles[profile](port)
+        device = DeviceManager.profiles()[profile](port)
         self.signals.add_device.emit(device)
 
 
