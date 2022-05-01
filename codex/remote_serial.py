@@ -1,4 +1,5 @@
 from qtstrap import *
+from qtpy.QtWebSockets import *
 
 
 class RemoteSerial:
