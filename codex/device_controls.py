@@ -156,7 +156,7 @@ class CustomListWidget(QWidget):
                 layout.add(self.add)
             layout.add(self.list)
 
-    def contextMenuEvent(self, event: PySide2.QtGui.QContextMenuEvent) -> None:
+    def contextMenuEvent(self, event: QtGui.QContextMenuEvent) -> None:
         pos = event.globalPos()
         item = self.list.itemAt(self.list.viewport().mapFromGlobal(pos))
         index = self.list.indexFromItem(item).row()
