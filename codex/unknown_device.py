@@ -38,7 +38,7 @@ class UnknownDevice(JudiStandardMixin, SerialDevice):
         self.state = DeviceStates.enumeration_pending
         self.bauds = iter(self._bauds)
 
-        self.cache_name = f'autodetect_cache:{self.port}'
+        self.cache_name = f'codex/autodetect_cache:{self.port}'
         baud, name = QSettings().value(self.cache_name, (9600, ''))
 
         self.set_baud_rate(int(baud))

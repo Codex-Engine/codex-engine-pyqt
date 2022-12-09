@@ -36,12 +36,12 @@ class DeviceManager(QObject):
 
         self.sub_manager = SubscriptionManager(self)
         
-        prev = QSettings().value('starting_devices', [])
+        prev = QSettings().value('codex/starting_devices', [])
         if isinstance(prev, str):
             prev = [prev]
         self.starting_devices = prev
 
-        prev = QSettings().value('ignored_ports', [])
+        prev = QSettings().value('codex/ignored_ports', [])
         if isinstance(prev, str):
             prev = [prev]
         self.ignored_ports = prev
@@ -60,11 +60,11 @@ class DeviceManager(QObject):
         
     def set_starting_devices(self, devices):
         self.starting_devices = devices
-        QSettings().setValue('starting_devices', devices)
+        QSettings().setValue('codex/starting_devices', devices)
 
     def set_ignored_ports(self, ports):
         self.ignored_ports = ports
-        QSettings().setValue('ignored_ports', ports)
+        QSettings().setValue('codex/ignored_ports', ports)
 
     def close(self):
         self.scan_timer.stop()
