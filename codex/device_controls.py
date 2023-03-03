@@ -9,7 +9,8 @@ except:
     serial_monitor_available = False
 
 try:
-    from command_palette import CommandPalette, Command
+    from qtstrap.extras.command_palette import CommandPalette, Command
+
     command_palette_available = True
 except:
     command_palette_available = False
