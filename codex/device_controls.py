@@ -4,6 +4,7 @@ from serial.tools.list_ports import comports
 
 try:
     from serial_monitor import SerialMonitorWidget
+
     serial_monitor_available = True
 except:
     serial_monitor_available = False
@@ -22,7 +23,7 @@ class DeviceTreeWidgetItem(QTreeWidgetItem):
 
         self.device = device
         self.guid = device.guid
-        
+
         self.setText(0, device.profile_name)
 
         parts = device.port.split('link?')
@@ -44,15 +45,15 @@ class DeviceTree(QTreeWidget):
         self.setItemsExpandable(False)
         self.setSelectionMode(QAbstractItemView.NoSelection)
         self.setColumnCount(2)
-        self.setColumnWidth(0,150)
+        self.setColumnWidth(0, 150)
         self.setHeaderLabels(['Name', 'Port'])
         self.setHorizontalScrollBarPolicy(Qt.ScrollBarAlwaysOff)
 
         self.nodes = {}
         self.local_device_root = QTreeWidgetItem(self)
-        self.local_device_root.setText(0, "Local Devices")
+        self.local_device_root.setText(0, 'Local Devices')
         self.remote_device_root = QTreeWidgetItem(self)
-        self.remote_device_root.setText(0, "Remote Devices")
+        self.remote_device_root.setText(0, 'Remote Devices')
 
         self.open_monitors = {}
 
@@ -91,20 +92,20 @@ class DeviceTree(QTreeWidget):
 
         if hasattr(item, 'device'):
             menu = QMenu()
-            
+
             if hasattr(item.device, 'settings'):
-                menu.addAction(QAction("Settings", self, triggered=lambda: self.open_settings(item)))
+                menu.addAction(QAction('Settings', self, triggered=lambda: self.open_settings(item)))
 
             if hasattr(item.device, 'widget'):
-                menu.addAction(QAction("Open Device Controls", self, triggered=lambda: self.open_widget(item)))
+                menu.addAction(QAction('Open Device Controls', self, triggered=lambda: self.open_widget(item)))
 
             if hasattr(item.device, 'locate'):
-                menu.addAction(QAction("Locate Device", self, triggered=item.device.locate))
+                menu.addAction(QAction('Locate Device', self, triggered=item.device.locate))
 
             if serial_monitor_available:
-                menu.addAction(QAction("Open Serial Monitor", self, triggered=lambda: self.open_monitor(item)))
-                menu.addAction(QAction("Open Serial Port", self, triggered=lambda: self.open_serial_port(item)))
-            menu.addAction(QAction("Remove", self, triggered=lambda: self.remove_clicked(item)))
+                menu.addAction(QAction('Open Serial Monitor', self, triggered=lambda: self.open_monitor(item)))
+                menu.addAction(QAction('Open Serial Port', self, triggered=lambda: self.open_serial_port(item)))
+            menu.addAction(QAction('Remove', self, triggered=lambda: self.remove_clicked(item)))
             menu.exec_(pos)
 
     def open_settings(self, item):
@@ -149,10 +150,10 @@ class CustomListWidget(QWidget):
         self.line.returnPressed.connect(self.on_add)
         self.add = QPushButton('Add', clicked=self.on_add)
 
-        with CVBoxLayout(self, margins=(0,0,0,0)) as layout:
-            with layout.hbox(margins=(0,0,0,0)) as layout:
+        with CVBoxLayout(self, margins=(0, 0, 0, 0)) as layout:
+            with layout.hbox(margins=(0, 0, 0, 0)) as layout:
                 layout.add(self.title)
-            with layout.hbox(margins=(0,0,0,0)) as layout:
+            with layout.hbox(margins=(0, 0, 0, 0)) as layout:
                 layout.add(self.line, 1)
                 layout.add(self.add)
             layout.add(self.list)
@@ -202,7 +203,7 @@ class DeviceManagerSettings(QWidget):
         self.ignored_ports.addItems(self.dm.ignored_ports)
         self.ignored_ports.list_changed.connect(self.dm.set_ignored_ports)
 
-        with CVBoxLayout(self, margins=(0,0,0,0)) as layout:
+        with CVBoxLayout(self, margins=(0, 0, 0, 0)) as layout:
             layout.add(self.ignored_ports)
             layout.add(self.starting_devices)
 
@@ -218,19 +219,19 @@ class NewDeviceWidget(QWidget):
 
         names = [p for p in DeviceManager.profile_names() if p != 'no profile']
         self.profile.addItems(names)
-        ports = ["DummyPort", *[port.device for port in sorted(comports())]]
+        ports = ['DummyPort', *[port.device for port in sorted(comports())]]
         self.port.addItems(ports)
 
-        with CVBoxLayout(self, margins=(0,0,0,0)) as layout:
+        with CVBoxLayout(self, margins=(0, 0, 0, 0)) as layout:
             # layout.add(QLabel('Add a device:'))
-            with layout.hbox(margins=(0,0,0,0)) as layout:
-                with layout.vbox(margins=(0,0,0,0)) as layout:
+            with layout.hbox(margins=(0, 0, 0, 0)) as layout:
+                with layout.vbox(margins=(0, 0, 0, 0)) as layout:
                     layout.add(QLabel('Profiles:'))
                     layout.add(QLabel('Ports:'))
-                with layout.vbox(margins=(0,0,0,0)) as layout:
-                    with layout.hbox(margins=(0,0,0,0)) as layout:
+                with layout.vbox(margins=(0, 0, 0, 0)) as layout:
+                    with layout.hbox(margins=(0, 0, 0, 0)) as layout:
                         layout.add(self.profile, 1)
-                    with layout.hbox(margins=(0,0,0,0)) as layout:
+                    with layout.hbox(margins=(0, 0, 0, 0)) as layout:
                         layout.add(self.port, 1)
                         layout.add(self.add)
 
@@ -255,7 +256,10 @@ class DeviceControlsWidget(QWidget):
         with CVBoxLayout(settings) as layout:
             layout.add(DeviceManagerSettings(self))
 
-        tabs = {'Devices':tree, 'Settings':settings, }
+        tabs = {
+            'Devices': tree,
+            'Settings': settings,
+        }
         with CVBoxLayout(self) as layout:
             self.tabs = layout.add(PersistentTabWidget('device_control_tabs', tabs=tabs))
 
@@ -269,8 +273,8 @@ class DeviceControlsDockWidget(QDockWidget):
 
         if command_palette_available:
             self.commands = [
-                Command("Device List: Show device list", triggered=self.show, shortcut='Ctrl+D'),
-                Command("Device List: Hide device list", triggered=self.hide),
+                Command('Device List: Show device list', triggered=self.show, shortcut='Ctrl+D'),
+                Command('Device List: Hide device list', triggered=self.hide),
             ]
 
         self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
