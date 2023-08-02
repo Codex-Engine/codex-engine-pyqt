@@ -1,9 +1,10 @@
 from queue import Queue
 from .filters import JudiFilter
-from serial import Serial, SerialException
+from serial import SerialException
 from serial.tools.list_ports_common import ListPortInfo
 from .dummy_serial import DummySerial
 from .remote_serial import RemoteSerial
+from .local_serial import LocalSerial
 import logging
 from qtstrap import *
 import time
@@ -17,10 +18,10 @@ class Signals(QObject):
 
 
 class SerialDeviceBase:
-    log = None
+    log: logging.Logger | None = None
 
     def __init__(self, port=None, baud=9600):
-        if self.log == None:
+        if self.log is None:
             self.log = logging.getLogger(__name__)
             
         self.base_signals = Signals()
@@ -57,12 +58,12 @@ class SerialDeviceBase:
         def send_text_message(s):
             try:
                 socket.sendTextMessage(s)
-            except ValueError as e:
+            except ValueError:
                 self.log.exception(f'{self.port}')
             
         self.base_signals.data_received.connect(lambda s: send_text_message(s))
 
-    def connect_stream(self, stream, type='completed'):
+    def connect_stream(self, stream, stream_type='completed'):
         """
         connect a stream monitor to this SerialDevice
         types: raw, accepted, rejected, completed
@@ -74,8 +75,8 @@ class SerialDeviceBase:
             'rejected': self.base_signals.char_rejected,
             'completed': self.base_signals.msg_completed,
         }
-        if type in types:
-            types[type].connect(stream.rx)
+        if stream_type in types:
+            types[stream_type].connect(stream.rx)
 
     def open(self):
         """
@@ -95,11 +96,11 @@ class SerialDeviceBase:
             return
 
         try:
-            self.ser = Serial(port=self.port, baudrate=self.baud, timeout=0, write_timeout=0)
+            self.ser = LocalSerial(port=self.port, baudrate=self.baud)
             self.active = True
-        except Exception as e:
+        except PermissionError:
             # TODO: bad exception handling, it's not always a permission error
-            self.log.exception("PermissionError" + str(e))
+            self.log.exception(f"failed to open serial port on {self.port}")
 
     def close(self):
         """ close the serial port and set the device to inactive """
@@ -131,8 +132,8 @@ class SerialDeviceBase:
             try:
                 self.ser.write(self.queue.get().encode())
                 self.last_transmit_time = time.time()
-            except SerialException as e:
-                self.log.exception(e)
+            except SerialException:
+                self.log.exception('serial write failed')
 
     def receive(self, string):
         """ do something when a complete string is captured in self.communicate() """
