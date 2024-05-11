@@ -1,15 +1,20 @@
 from qtpy.QtSerialPort import QSerialPort
-import logging
+from serial import Serial
 
+
+class LocalSerial2:
+    def __init__(self, *args, **kwargs):
+        self.ser = Serial(*args, **kwargs)
+
+    def __getattr__(self, name):
+        return getattr(self.ser, name)
+    
 
 class LocalSerial:
     def __init__(self, port='', baudrate=9600):
-        self.log = logging.getLogger(__name__)
-
         self.ser = QSerialPort()
         self.ser.setPortName(port)
         self.ser.setBaudRate(baudrate)
-        self.log.info(f'creating LocalSerial: {port}@{baudrate}')
 
         self.open()
 
@@ -25,14 +30,8 @@ class LocalSerial:
     def read(self, number=1):
         return bytes(self.ser.read(number))
 
-    @property
-    def baudrate(self):
-        return self.ser.baudRate()
-
-    @baudrate.setter
     def set_baudrate(self, baudrate):
-        self.log.info(f'setting baudrate {baudrate}')
-        self.ser.setBaudRate(baudrate)
+        return self.ser.setBaudRate(baudrate)
 
     @property
     def in_waiting(self):

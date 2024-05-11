@@ -45,11 +45,14 @@ class SerialDeviceBase:
             self.open()
 
     def set_baud_rate(self, baud):
-        try:
-            self.ser.baudrate = baud
+        self.log.debug(f'{self.port}: setting baud to: {baud}')
+        result = self.ser.ser.setBaudRate(baud)
+        
+        if result:
             self.baud = baud
-        except:
-            return False
+        else:
+            self.log.debug(f'{self.port}: setting baud failed! {self.ser.ser.error()}')
+
         return True
 
     def connect_socket(self, socket):
@@ -116,7 +119,7 @@ class SerialDeviceBase:
         if not self.active:
             return
 
-        self.log.debug(f"TX: {string}")
+        self.log.debug(f"TX [{self.port}@{self.baud}]: {string}")
         self.queue.put(string)
         
     def transmit_next_message(self):
@@ -137,7 +140,7 @@ class SerialDeviceBase:
 
     def receive(self, string):
         """ do something when a complete string is captured in self.communicate() """
-        self.log.debug(f"RX: {string}")
+        self.log.debug(f"RX [{self.port}@{self.baud}]: {string}")
         self.base_signals.msg_completed.emit(string)
 
     def check_incoming_data(self):
