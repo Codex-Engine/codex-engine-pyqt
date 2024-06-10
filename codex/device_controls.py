@@ -150,10 +150,10 @@ class CustomListWidget(QWidget):
         self.line.returnPressed.connect(self.on_add)
         self.add = QPushButton('Add', clicked=self.on_add)
 
-        with CVBoxLayout(self, margins=(0, 0, 0, 0)) as layout:
-            with layout.hbox(margins=(0, 0, 0, 0)) as layout:
+        with CVBoxLayout(self, margins=0) as layout:
+            with layout.hbox(margins=0) as layout:
                 layout.add(self.title)
-            with layout.hbox(margins=(0, 0, 0, 0)) as layout:
+            with layout.hbox(margins=0) as layout:
                 layout.add(self.line, 1)
                 layout.add(self.add)
             layout.add(self.list)
@@ -195,15 +195,17 @@ class DeviceManagerSettings(QWidget):
         super().__init__(parent)
         self.dm = QApplication.instance().device_manager
 
-        self.starting_devices = CustomListWidget('Starting Devices:')
-        self.starting_devices.addItems(self.dm.starting_devices)
-        self.starting_devices.list_changed.connect(self.dm.set_starting_devices)
-
         self.ignored_ports = CustomListWidget('Ignored Ports:')
+        self.ignored_ports.line.setPlaceholderText('COM1, /dev/ttyUSB0, ...')
         self.ignored_ports.addItems(self.dm.ignored_ports)
         self.ignored_ports.list_changed.connect(self.dm.set_ignored_ports)
 
-        with CVBoxLayout(self, margins=(0, 0, 0, 0)) as layout:
+        self.starting_devices = CustomListWidget('Starting Devices:')
+        self.starting_devices.line.setPlaceholderText('<Profile>:<Port>[:<Baud>]')
+        self.starting_devices.addItems(self.dm.starting_devices)
+        self.starting_devices.list_changed.connect(self.dm.set_starting_devices)
+
+        with CVBoxLayout(self, margins=0) as layout:
             layout.add(self.ignored_ports)
             layout.add(self.starting_devices)
 
@@ -214,32 +216,40 @@ class NewDeviceWidget(QWidget):
         super().__init__(parent)
 
         self.profile = QComboBox()
-        self.port = QComboBox()
-        self.add = QPushButton('Add Device', clicked=self.add_pressed)
-
         names = [p for p in DeviceManager.profile_names() if p != 'no profile']
         self.profile.addItems(names)
+
+        self.port = QComboBox()
         ports = ['DummyPort', *[port.device for port in sorted(comports())]]
         self.port.addItems(ports)
 
-        with CVBoxLayout(self, margins=(0, 0, 0, 0)) as layout:
+        self.baud = QComboBox()
+        self.baud.addItems(['9600', '19200', '38400', '115200', '230400', '460800', '1000000'])
+
+        self.add = QPushButton('Add Device', clicked=self.add_pressed)
+
+        with CVBoxLayout(self, margins=0) as layout:
             # layout.add(QLabel('Add a device:'))
-            with layout.hbox(margins=(0, 0, 0, 0)) as layout:
-                with layout.vbox(margins=(0, 0, 0, 0)) as layout:
+            with layout.hbox(margins=0) as layout:
+                with layout.vbox(margins=0) as layout:
                     layout.add(QLabel('Profiles:'))
                     layout.add(QLabel('Ports:'))
-                with layout.vbox(margins=(0, 0, 0, 0)) as layout:
-                    with layout.hbox(margins=(0, 0, 0, 0)) as layout:
+                    layout.add(QLabel('Baud:'))
+                with layout.vbox(margins=0) as layout:
+                    with layout.hbox(margins=0) as layout:
                         layout.add(self.profile, 1)
-                    with layout.hbox(margins=(0, 0, 0, 0)) as layout:
+                    with layout.hbox(margins=0) as layout:
                         layout.add(self.port, 1)
+                    with layout.hbox(margins=0) as layout:
+                        layout.add(self.baud, 1)
                         layout.add(self.add)
 
     def add_pressed(self):
         profile = self.profile.currentText()
         port = self.port.currentText()
+        baud = int(self.baud.currentText())
 
-        device = DeviceManager.profiles()[profile](port)
+        device = DeviceManager.profiles()[profile](port=port, baud=baud)
         self.signals.add_device.emit(device)
 
 
@@ -264,10 +274,13 @@ class DeviceControlsWidget(QWidget):
             self.tabs = layout.add(PersistentTabWidget('device_control_tabs', tabs=tabs))
 
 
-class DeviceControlsDockWidget(QDockWidget):
+class DeviceControlsDockWidget(BaseDockWidget):
+    _title = 'Device Controls'
+    _starting_area = Qt.RightDockWidgetArea
+    _shortcut = 'Ctrl+D'
+
     def __init__(self, parent=None):
-        super().__init__('Device Controls', parent=parent)
-        self.setObjectName('DeviceControls')
+        super().__init__(parent=parent)
 
         self.setWidget(DeviceControlsWidget(self))
 
@@ -276,18 +289,3 @@ class DeviceControlsDockWidget(QDockWidget):
                 Command('Device List: Show device list', triggered=self.show, shortcut='Ctrl+D'),
                 Command('Device List: Hide device list', triggered=self.hide),
             ]
-
-        self.setAllowedAreas(Qt.LeftDockWidgetArea | Qt.RightDockWidgetArea)
-        self.setFeatures(QDockWidget.DockWidgetClosable | QDockWidget.DockWidgetMovable)
-
-        self.starting_area = Qt.RightDockWidgetArea
-
-        if not self.parent().restoreDockWidget(self):
-            self.parent().addDockWidget(self.starting_area, self)
-
-        self.closeEvent = lambda x: self.hide()
-
-    def toggleViewAction(self):
-        action = super().toggleViewAction()
-        action.setShortcut('Ctrl+D')
-        return action
