@@ -37,21 +37,21 @@ class DeviceContextLogFilter(logging.Filter):
 
 
 class SerialDevice(SerialDeviceBase):
-    profile_name = ""
-    
+    profile_name = ''
+
     def __init__(self, port=None, baud=9600, device=None):
         self.port = port
         self.baud = baud
-        self.name = ""
+        self.name = ''
         self.guid = get_fake_guid()
-        
+
         # a SerialDevice can be created based on an existing SerialDevice
         if device:
             self.port = device.port
             self.baud = device.baud
             self.name = device.name
             self.guid = device.guid
-        
+
         self.callbacks = {}
 
         super().__init__(port=self.port, baud=self.baud)
@@ -67,19 +67,19 @@ class SerialDevice(SerialDeviceBase):
         # message stuff
         self.msg_count = 0
         self.message_tree = MessageTree()
-        self.msg_history = []       
+        self.msg_history = []
 
     @property
     def title(self):
-        return f"{self.profile_name} ({self.port}) <{self.guid}>"
+        return f'{self.profile_name} ({self.port}) <{self.guid}>'
 
     @property
     def description(self):
         return {
-            "profile_name":self.profile_name,
-            "guid":self.guid,
-            "port":self.port,
-            "title":self.title,
+            'profile_name': self.profile_name,
+            'guid': self.guid,
+            'port': self.port,
+            'title': self.title,
         }
 
     def process_message(self, msg, table):
@@ -123,4 +123,4 @@ class SerialDevice(SerialDeviceBase):
             self.route_message(msg)
 
         except json.decoder.JSONDecodeError as e:
-            self.log.warn("JSONDecodeError" + str(e))
+            self.log.warn('JSONDecodeError' + str(e))

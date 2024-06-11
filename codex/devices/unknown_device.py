@@ -1,6 +1,7 @@
-from codex import SerialDevice, JudiStandardMixin
 from qtstrap import *
-from .filters import JudiFilter, NullFilter
+from . import SerialDevice
+from codex import JudiStandardMixin
+from ..filters import JudiFilter, NullFilter
 import time
 from enum import Enum
 from serial import SerialException
@@ -13,11 +14,11 @@ class DeviceStates(Enum):
 
 
 class UnknownDevice(JudiStandardMixin, SerialDevice):
-    profile_name = "no profile"
+    profile_name = 'no profile'
 
     _bauds = [9600, 19200, 38400, 115200, 230400, 460800, 1000000]
-    handshake_table = {b:{} for b in _bauds}
-    checker_table = {b:[] for b in _bauds}
+    handshake_table = {b: {} for b in _bauds}
+    checker_table = {b: [] for b in _bauds}
 
     @classmethod
     def register_autodetect_info(cls, profiles):
@@ -42,10 +43,10 @@ class UnknownDevice(JudiStandardMixin, SerialDevice):
         baud, name = QSettings().value(self.cache_name, (9600, ''))
 
         self.set_baud_rate(int(baud))
-        
+
         if name in self.handshake_table[baud]:
             self.handshake_table[baud][name](self.send)
-        
+
         self.transmit_rate_limit = 0.1
         self.last_handshake_time = time.time()
 

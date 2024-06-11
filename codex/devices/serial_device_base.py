@@ -1,8 +1,8 @@
 from queue import Queue
-from .filters import JudiFilter
+from ..filters import JudiFilter
 from serial import SerialException
 from serial.tools.list_ports_common import ListPortInfo
-from .drivers import DummySerial, RemoteSerial, LocalSerial
+from ..drivers import DummySerial, RemoteSerial, LocalSerial
 import logging
 from qtstrap import *
 import time

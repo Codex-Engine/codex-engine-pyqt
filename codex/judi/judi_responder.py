@@ -10,12 +10,12 @@ class JudiResponder:
 
                 elif isinstance(msg[k], str):
                     return table[k][msg[k]]()
-                    
+
                 elif isinstance(msg[k], dict):
                     return self.process_message(msg[k], table[k])
 
         return ''
-    
+
     def respond(self, string):
         message = json.loads(string)
         return self.process_message(message, self.response_tree)

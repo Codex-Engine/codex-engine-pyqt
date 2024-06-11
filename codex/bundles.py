@@ -16,9 +16,9 @@ class SigBundle(QObject):
 
         if link:
             self.link(link)
-    
+
     def _link(self, slot, sig=None):
-        """ Connect the given slot to a matching signal, if it exists """
+        """Connect the given slot to a matching signal, if it exists"""
         signal = sig if sig else slot.__name__
         if hasattr(self, signal):
             getattr(self, signal).connect(slot)
@@ -29,7 +29,7 @@ class SigBundle(QObject):
                 self._link(getattr(obj, name))
 
     def link_to(self, *args):
-        """ Connect all of our signals to matching slots on the provided object, if they exist """
+        """Connect all of our signals to matching slots on the provided object, if they exist"""
         for arg in args:
             if isinstance(arg, list):
                 for obj in arg:
@@ -48,7 +48,7 @@ class SigBundle(QObject):
             self._link(tup[1], sig=signal)
 
     def link(self, *args):
-        """ Connect the given slots to matching signals, if they exist """
+        """Connect the given slots to matching signals, if they exist"""
         if isinstance(args[0], str):
             for arg in args[1:]:
                 self._link_tuple((args[0], arg))
@@ -70,7 +70,7 @@ class SigBundle(QObject):
 
                 else:
                     self._link(arg)
-            
+
         return self
 
 
@@ -82,7 +82,7 @@ class SlotBundle(QObject):
         self.sig_fmt = sig_fmt
 
         # add signals
-        signals = {self.sig_fmt.format(name):args for name, args in slots.items()}
+        signals = {self.sig_fmt.format(name): args for name, args in slots.items()}
         self._signals = SigBundle(signals)
 
         # add slot methods
@@ -96,7 +96,8 @@ class SlotBundle(QObject):
             self.link(link)
 
     def _add_slot(self, name, args):
-        """ add a qt Slot to this object """
+        """add a qt Slot to this object"""
+
         @Slot(*args)
         def fn(self, *args):
             getattr(self._signals, f'on_{name}').emit(*args)
@@ -104,7 +105,7 @@ class SlotBundle(QObject):
         setattr(self, name, fn.__get__(self, super()))
 
     def _link(self, func, sig=None):
-        """ Connect the given function to a matching signal, if it exists """
+        """Connect the given function to a matching signal, if it exists"""
         signal = sig if sig else func.__name__
         if hasattr(self._signals, signal):
             getattr(self._signals, signal).connect(func)
@@ -115,7 +116,7 @@ class SlotBundle(QObject):
                 self._link(getattr(obj, name))
 
     def link_to(self, *args):
-        """ Connect all of our signals to matching functions on the provided object, if they exist """
+        """Connect all of our signals to matching functions on the provided object, if they exist"""
         for arg in args:
             if isinstance(arg, list):
                 for obj in arg:
@@ -134,7 +135,7 @@ class SlotBundle(QObject):
             self._link(tup[1], sig=signal)
 
     def link(self, *args):
-        """ Connect the given functions to matching signals, if they exist """
+        """Connect the given functions to matching signals, if they exist"""
         if isinstance(args[0], str):
             for arg in args[1:]:
                 self._link_tuple((args[0], arg))
@@ -152,9 +153,9 @@ class SlotBundle(QObject):
 
                 elif isinstance(arg, dict):
                     for s, f in arg.items():
-                        self._link_tuple((s, f)) 
+                        self._link_tuple((s, f))
 
                 else:
                     self._link(arg)
-            
+
         return self

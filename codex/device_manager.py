@@ -23,10 +23,10 @@ class DeviceManager(QObject):
     def __init__(self, parent=None):
         super().__init__(parent=parent)
         self.log = logging.getLogger(__name__)
-        self.log.info("Initializing DeviceManager...")
+        self.log.info('Initializing DeviceManager...')
 
-        self.signals = SigBundle({'device_added':[SerialDevice], 'device_removed': [str]})
-        self.slots = SlotBundle({'add_device':[SerialDevice], 'remove_device': [str]})
+        self.signals = SigBundle({'device_added': [SerialDevice], 'device_removed': [str]})
+        self.slots = SlotBundle({'add_device': [SerialDevice], 'remove_device': [str]})
         self.slots.link_to(self)
 
         self.devices = {}
@@ -35,7 +35,7 @@ class DeviceManager(QObject):
         self.ports = []
 
         self.sub_manager = SubscriptionManager(self)
-        
+
         prev = QSettings().value('codex/starting_devices', [])
         if isinstance(prev, str):
             prev = [prev]
@@ -53,11 +53,11 @@ class DeviceManager(QObject):
         self.update_timer = QTimer()
         self.update_timer.timeout.connect(lambda: self.update())
         self.update_timer.start(1)
-        
+
         self.sub_manager.check_for_new_subscribers()
 
         UnknownDevice.register_autodetect_info(self.profiles())
-        
+
     def set_starting_devices(self, devices):
         self.starting_devices = devices
         QSettings().setValue('codex/starting_devices', devices)
@@ -102,19 +102,19 @@ class DeviceManager(QObject):
         self.sub_manager.check_for_new_subscribers()
 
         new_ports = [p.device for p in sorted(comports())]
-        
+
         if self.first_scan:
             self.do_first_scan(new_ports)
 
         for port in [p for p in new_ports if p not in self.ports]:
             if port not in self.ignored_ports:
-                self.log.debug(f"New device connected at ({port}), enumerating...")
+                self.log.debug(f'New device connected at ({port}), enumerating...')
                 device = UnknownDevice(port=port)
                 self.new_devices.append(device)
 
-        for port in [p for p in self.ports if p not in new_ports]:            
-            self.log.debug(f"Existing device removed from ({port}), cleaning up...")
-            
+        for port in [p for p in self.ports if p not in new_ports]:
+            self.log.debug(f'Existing device removed from ({port}), cleaning up...')
+
             for k in self.devices.keys():
                 if self.devices[k].port == port:
                     self.on_remove_device(self.devices[k].guid)
@@ -127,16 +127,16 @@ class DeviceManager(QObject):
             device.communicate()
 
             if device.state == DeviceStates.enumeration_failed:
-                self.log.debug(f"Enumeration failed on ({device.port})")
+                self.log.debug(f'Enumeration failed on ({device.port})')
                 device.close()
                 self.new_devices.remove(device)
-        
+
             elif device.state == DeviceStates.enumeration_succeeded:
                 if device.name in DeviceManager.profile_names():
                     device.close()
                     new_device = self.profiles()[device.name](device=device)
 
-                    self.log.debug(f"Enumeration succeeded on ({new_device.port})")
+                    self.log.debug(f'Enumeration succeeded on ({new_device.port})')
 
                     self.devices[new_device.guid] = new_device
                     self.new_devices.remove(device)

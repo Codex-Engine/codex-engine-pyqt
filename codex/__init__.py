@@ -1,13 +1,7 @@
-from .serial_device import SerialDevice
-from .drivers import DummySerial, RemoteSerial, LocalSerial
-
 from .filters import JudiFilter, NullFilter, NewlineFilter, DelimiterFilter
-
-from .judi_mixin import JudiStandardMixin
-from .judi_responder import JudiResponder
-
-from .console_device import ConsoleDevice
-from .unknown_device import UnknownDevice, DeviceStates
+from .drivers import DummySerial, RemoteSerial, LocalSerial
+from .judi import JudiStandardMixin, JudiResponder
+from .devices import SerialDevice, ConsoleDevice, UnknownDevice, DeviceStates
 
 from .device_manager import DeviceManager
 from .subscriptions import SubscriptionManager

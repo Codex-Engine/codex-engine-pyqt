@@ -1,22 +1,13 @@
-
 class JudiStandardMixin:
     @property
     def common_message_tree(self):
-        return {
-            'update': {
-                'device_info': self.handshake_received
-            },
-            'response': {
-                'ok': None, 
-                'error': None
-            }
-        }
+        return {'update': {'device_info': self.handshake_received}, 'response': {'ok': None, 'error': None}}
 
     def ping(self):
-        self.send({'request':'ping'})
+        self.send({'request': 'ping'})
 
     def handshake(self):
-        self.send({'request':'device_info'})
+        self.send({'request': 'device_info'})
 
     def handshake_received(self, response):
         if 'product_name' in response:
@@ -32,4 +23,4 @@ class JudiStandardMixin:
             self.signals.handshake_received.emit(response)
 
     def locate(self):
-        self.send({'command':'locate'})
+        self.send({'command': 'locate'})
