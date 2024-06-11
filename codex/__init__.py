@@ -1,5 +1,5 @@
 from .serial_device import SerialDevice
-from .remote_serial import RemoteSerial
+from .drivers import DummySerial, RemoteSerial, LocalSerial
 
 from .filters import JudiFilter, NullFilter, NewlineFilter, DelimiterFilter
 

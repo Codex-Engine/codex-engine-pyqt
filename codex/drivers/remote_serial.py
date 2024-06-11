@@ -5,7 +5,7 @@ from qtpy.QtWebSockets import *
 class RemoteSerial:
     def __init__(self, port=None, timeout=0):
         self.port = port
-        self.read_buffer = ""
+        self.read_buffer = ''
 
         self.socket = QWebSocket()
         self.socket.textMessageReceived.connect(self._receive)
@@ -28,11 +28,17 @@ class RemoteSerial:
 
     def read(self, number=1):
         # TODO: huge future performance issues
-        result = ""
+        result = ''
         for i in range(number):
             result += self.read_buffer[:1]
             self.read_buffer = self.read_buffer[1:]
         return result.encode()
+
+    def error(self):
+        return None
+
+    def set_baudrate(self, baudrate):
+        return True
 
     @property
     def in_waiting(self):

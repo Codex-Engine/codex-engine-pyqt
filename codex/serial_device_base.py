@@ -2,19 +2,17 @@ from queue import Queue
 from .filters import JudiFilter
 from serial import SerialException
 from serial.tools.list_ports_common import ListPortInfo
-from .dummy_serial import DummySerial
-from .remote_serial import RemoteSerial
-from .local_serial import LocalSerial
+from .drivers import DummySerial, RemoteSerial, LocalSerial
 import logging
 from qtstrap import *
 import time
 
 
 class Signals(QObject):
-    data_received = Signal(str) # pre filter
-    char_accepted = Signal(str) # passes filter
-    char_rejected = Signal(str) # fails filter
-    msg_completed = Signal(str) # complete message
+    data_received = Signal(str)  # pre filter
+    char_accepted = Signal(str)  # passes filter
+    char_rejected = Signal(str)  # fails filter
+    msg_completed = Signal(str)  # complete message
 
 
 class SerialDeviceBase:
@@ -23,7 +21,7 @@ class SerialDeviceBase:
     def __init__(self, port=None, baud=9600):
         if self.log is None:
             self.log = logging.getLogger(__name__)
-            
+
         self.base_signals = Signals()
 
         self.queue = Queue()
@@ -39,19 +37,19 @@ class SerialDeviceBase:
         if isinstance(port, ListPortInfo):
             self.port = port.device
         else:
-            self.port = port    
+            self.port = port
 
         if self.port:
             self.open()
 
     def set_baud_rate(self, baud):
         self.log.debug(f'{self.port}: setting baud to: {baud}')
-        result = self.ser.ser.setBaudRate(baud)
-        
+        result = self.ser.set_baudrate(baud)
+
         if result:
             self.baud = baud
         else:
-            self.log.debug(f'{self.port}: setting baud failed! {self.ser.ser.error()}')
+            self.log.debug(f'{self.port}: setting baud failed! {self.ser.error()}')
 
         return True
 
@@ -63,7 +61,7 @@ class SerialDeviceBase:
                 socket.sendTextMessage(s)
             except ValueError:
                 self.log.exception(f'{self.port}')
-            
+
         self.base_signals.data_received.connect(lambda s: send_text_message(s))
 
     def connect_stream(self, stream, stream_type='completed'):
@@ -87,13 +85,13 @@ class SerialDeviceBase:
 
         Some port names trigger special behavior.
         """
-        if self.port == "DummyPort":
+        if self.port == 'DummyPort':
             self.ser = DummySerial()
             self.active = True
             return
 
-        if self.port.startswith("RemoteSerial"):
-            self.port = 'ws://' + self.port[len("RemoteSerial:"):]
+        if self.port.startswith('RemoteSerial'):
+            self.port = 'ws://' + self.port[len('RemoteSerial:') :]
             self.ser = RemoteSerial(port=self.port)
             self.active = True
             return
@@ -103,10 +101,10 @@ class SerialDeviceBase:
             self.active = True
         except PermissionError:
             # TODO: bad exception handling, it's not always a permission error
-            self.log.exception(f"failed to open serial port on {self.port}")
+            self.log.exception(f'failed to open serial port on {self.port}')
 
     def close(self):
-        """ close the serial port and set the device to inactive """
+        """close the serial port and set the device to inactive"""
         if not self.active:
             return
 
@@ -115,13 +113,13 @@ class SerialDeviceBase:
         self.active = False
 
     def send(self, string):
-        """ add a string to the outbound queue """
+        """add a string to the outbound queue"""
         if not self.active:
             return
 
-        self.log.debug(f"TX [{self.port}@{self.baud}]: {string}")
+        self.log.debug(f'TX [{self.port}@{self.baud}]: {string}')
         self.queue.put(string)
-        
+
     def transmit_next_message(self):
         """
         Pull a message from the outbound queue and transmit it to the serial port.
@@ -139,8 +137,8 @@ class SerialDeviceBase:
                 self.log.exception('serial write failed')
 
     def receive(self, string):
-        """ do something when a complete string is captured in self.communicate() """
-        self.log.debug(f"RX [{self.port}@{self.baud}]: {string}")
+        """do something when a complete string is captured in self.communicate()"""
+        self.log.debug(f'RX [{self.port}@{self.baud}]: {string}')
         self.base_signals.msg_completed.emit(string)
 
     def check_incoming_data(self):
@@ -160,11 +158,11 @@ class SerialDeviceBase:
             name = ''
             if hasattr(self, 'profile_name'):
                 name = self.profile_name
-                
-            self.log.exception(f"{name}: {self.port} | {e}")
+
+            self.log.exception(f'{name}: {self.port} | {e}')
 
     def communicate(self):
-        """ Handle comms with the serial port. Call this often, from an event loop or something. """
+        """Handle comms with the serial port. Call this often, from an event loop or something."""
         if not self.active:
             return
 
