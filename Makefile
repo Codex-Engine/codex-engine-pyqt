@@ -26,12 +26,12 @@ reload: venv
 	$(VENV_PYTHON) -m pip install -e .
 
 #
-build: venv
-	$(VENV_PYTHON) -m build
+build:
+	uv build
 
 #
-publish: venv
-	$(VENV_PYTHON) -m twine upload dist/* -u __token__
+publish:
+	twine upload dist/* -u __token__
 
 #
 tests: venv
