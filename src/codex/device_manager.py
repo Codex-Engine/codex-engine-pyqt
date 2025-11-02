@@ -109,8 +109,11 @@ class DeviceManager(QObject):
         for port in [p for p in new_ports if p not in self.ports]:
             if port not in self.ignored_ports:
                 self.log.debug(f'New device connected at ({port}), enumerating...')
-                device = UnknownDevice(port=port)
-                self.new_devices.append(device)
+                try:
+                    device = UnknownDevice(port=port)
+                    self.new_devices.append(device)
+                except:
+                    self.log.error(f'New device setup failed at ({port})!')
 
         for port in [p for p in self.ports if p not in new_ports]:
             self.log.debug(f'Existing device removed from ({port}), cleaning up...')

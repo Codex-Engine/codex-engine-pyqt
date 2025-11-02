@@ -99,7 +99,7 @@ class SerialDeviceBase:
         try:
             self.ser = LocalSerial(port=self.port, baudrate=self.baud)
             self.active = True
-        except PermissionError:
+        except SerialException:
             # TODO: bad exception handling, it's not always a permission error
             self.log.exception(f'failed to open serial port on {self.port}')
 
